@@ -1,6 +1,6 @@
 #!/usr/bin/env vim
 " termux-clipboard.vim - Yank/Put to/from Android clipboard via Vim
-" Version: 0.0.1
+" Version: 0.0.2
 " Maintainer: S0AndS0
 " License: AGPL-3.0
 "
@@ -14,12 +14,17 @@
 
 
 ""
-" Fast finish if already loaded or Vim version is bellow target
-if exists('g:termux_clipboard__loaded') || v:version < 700
+" Fast finish if already loaded, Vim version bellow target, or Termux clipboard commands not available
+if exists('g:termux_clipboard__loaded') || v:version < 700 || executable('termux-clipboard-set') == 0 || executable('termux-clipboard-get') == 0
 	finish
 endif
 let g:termux_clipboard__loaded = 1
 
+""
+" Remap p and P only when user set g:termux_clipboard_remap to 1
+if !exists('g:termux_clipboard_remap')
+    let g:termux_clipboard_remap = 0
+endif
 
 ""
 " Merged dictionary without mutation
@@ -71,22 +76,16 @@ else
 	let g:termux_clipboard = s:defaults
 endif
 
-
 ""
 " ... Registration of mode mapping should be added here...
 
 ""
 " See: {docs} :help TextYankPost
 " See: {docs} :help job_start
-function! s:Termux_Yank()
-	if v:event['regname'] == '+' || v:event['regname'] == ''
-				silent call job_start(['termux-clipboard-set'] + [getreg(v:event['regname'])], {
-					\ 	"in_io": "null",
-					\ 	"out_io": "null",
-					\ 	"err_io": "null",
-					\ 	"stoponexit": "",
-					\ })
-	endif
+function! s:Termux_Yank() abort
+    if v:event['regname'] ==# ''
+        call system('sh -c "echo '.shellescape(getreg(v:event['regname'])).' | termux-clipboard-set &"')
+    endif
 endfunction
 
 augroup TermuxYank
@@ -98,36 +97,29 @@ function! s:clipboard_to_unnamed()
 	silent let @"=system('termux-clipboard-get')
 endfunction
 
-function! s:put(p, fallback)
-	if a:fallback
-			return a:p
-	endif
-
-	call s:clipboard_to_unnamed()
-	return '""' . a:p
+function! s:put(p)
+    call s:clipboard_to_unnamed()
+    return '""' . a:p
 endfunction
 
-function! s:ctrl_r(cr)
-	call s:clipboard_to_unnamed()
-	return a:cr . '"'
-endfunction
+nnoremap <expr> <silent> "+p <SID>put('p')
+nnoremap <expr> <silent> "+P <SID>put('P')
+nnoremap <expr> <silent> l <SID>clipboard_to_unnamed()
+vnoremap <expr> <silent> "+p <SID>put('p')
+vnoremap <expr> <silent> "+P <SID>put('P')
+vnoremap <expr> <silent> l <SID>clipboard_to_unnamed()
 
-nnoremap <expr> <silent> "+p <SID>put('p', v:false)
-nnoremap <expr> <silent> "+P <SID>put('P', v:false)
-nnoremap <expr> <silent> p <SID>put('p', has('clipboard') && clipboard !~ 'unnamedplus')
-nnoremap <expr> <silent> P <SID>put('P', has('clipboard') && clipboard !~ 'unnamedplus')
+if g:termux_clipboard_remap
+    nnoremap <expr> <silent> p <SID>put('p')
+    nnoremap <expr> <silent> P <SID>put('P')
+    vnoremap <expr> <silent> p <SID>put('p')
+    vnoremap <expr> <silent> P <SID>put('P')
+endif
 
-
-vnoremap <expr> <silent> "+p <SID>put('p', v:false)
-vnoremap <expr> <silent> "+P <SID>put('P', v:false)
-vnoremap <expr> <silent> p <SID>put('p', has('clipboard') && &clipboard !~ 'unnamedplus')
-vnoremap <expr> <silent> P <SID>put('P', has('clipboard') && &clipboard !~ 'unnamedplus')
-
-
-inoremap <expr> <silent> <C-R>+ <SID>ctrl_r("\<C-R>")
-inoremap <expr> <silent> <C-R><C-R>+ <SID>ctrl_r("\<C-R>\<C-R>")
-inoremap <expr> <silent> <C-R><C-O>+ <SID>ctrl_r("\<C-R>\<C-O>")
-inoremap <expr> <silent> <C-R><C-P>+ <SID>ctrl_r("\<C-R>\<C-P>")
+inoremap <expr> <silent> <C-R>+ <SID>put("\<C-R>")
+inoremap <expr> <silent> <C-R><C-R>+ <SID>put("\<C-R>\<C-R>")
+inoremap <expr> <silent> <C-R><C-O>+ <SID>put("\<C-R>\<C-O>")
+inoremap <expr> <silent> <C-R><C-P>+ <SID>put("\<C-R>\<C-P>")
 
 
 " vim:foldmethod=marker:foldlevel=0
