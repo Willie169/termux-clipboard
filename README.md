@@ -34,29 +34,40 @@ Integrate Vim '+' register with the Android system clipboard via Termux APIs
   "&#x1F3D7; Prerequisites and/or dependencies that this project needs to function properly"
 
 
-This repository requires the [Vim][vim_home] text editor to be installed the
-source code is available on [GitHub -- `vim/vim`][vim__github], and most GNU
-Linux package managers are able to install Vim directly, eg...
-
+This repository is for the [Vim][vim_home] text editor, whose source code is available on [GitHub -- `vim/vim`][vim__github], and most GNU
+Linux package managers are able to install Vim directly, e.g.
 
 - Termux
-
-
    ```bash
    pkg install vim
+   ```
+- Debian/Ubuntu
+   ```bash
+   apt update
+   apt install vim
    ```
 
 > Note; installing without python support, eg. `pkg install vim`, _should_ also
 > function fine instead for this plugin
 
-Additionally the Termux API CLI must be installed within via;
+Additionally the Termux API CLI must be installed in Termux:
+```bash
+pkg install termux-api
+```
+and the corresponding [Termux:API](https://wiki.termux.com/wiki/Termux:API) app must be installed as well.
 
-   ```bash
-   pkg install termux-api
-   ```
+If using in proot-distro, termux-api binaries must be exposed to it, which can be done by not using `--isolated` or using `--isolated --bind /apex --bind /data/dalvik-cache --bind /system --bind /linkerconfig --bind /vendor --bind /data/data/com.termux/files/usr` when logging in.
 
-... As well as the corresponding [API](https://wiki.termux.com/wiki/Termux:API)
-
+Moreover, `uuidgen` is used in yanking (copying), which can be installed via
+- Termux
+    ```bash
+    pkg install uuid-utils
+    ```
+- Debian/Ubuntu
+    ```bash
+    apt update
+    apt install uuid-runtime
+    ```
 
 ______
 
