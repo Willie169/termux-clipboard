@@ -107,10 +107,10 @@ endfunction
 
 nnoremap <expr> <silent> "+p <SID>put('p')
 nnoremap <expr> <silent> "+P <SID>put('P')
-nnoremap <expr> <silent> l <SID>clipboard_to_unnamed()
+nnoremap <expr> <silent> t <SID>clipboard_to_unnamed()
 vnoremap <expr> <silent> "+p <SID>put('p')
 vnoremap <expr> <silent> "+P <SID>put('P')
-vnoremap <expr> <silent> l <SID>clipboard_to_unnamed()
+vnoremap <expr> <silent> t <SID>clipboard_to_unnamed()
 
 if g:termux_clipboard_remap
     nnoremap <expr> <silent> p <SID>put('p')
