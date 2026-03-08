@@ -131,7 +131,7 @@ Just use `"+y`, `"+p`, `<C-R>+` as you always do. Specifically, here's what's su
 - Any yank command that starts with `"+` (e.g. `"+yy` or `"+yiw`) in insert and visual modes.
 - Pasting in normal and visual modes with `"+p` or `"+P`.
 - Pasting in insert mode with `<C-R>+`, `<C-R><C-R>+`, `<C-R><C-O>+`, or `<C-R><C-P>+`.
-- Press `t` to load Android clipboard content into unnamed register to be used by `p`, `P`, `""p`, `""P`.
+- Press `t` to load Android clipboard content into unnamed reg to be used by `p`, `P`, `""p`, `""P`.
 
 If you need more functionality, consider checking out [vim-fakeclip](https://github.com/kana/vim-fakeclip).
 
