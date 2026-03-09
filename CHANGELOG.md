@@ -21,12 +21,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Start maintaining versions and a changelog.
 
-## [0.0.2] - 2026-03-08
+## [0.0.2] - 2026-03-11
 
 ### Added
 
 - Add fast finish when Termux clipboard commands are not available.
-- Add `t` mapping to get Android clipboard into unnamed reg.
+- Add `Z` mapping to get Android clipboard into unnamed reg.
 
 ### Changed
 
